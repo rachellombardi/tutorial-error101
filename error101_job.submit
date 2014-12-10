@@ -1,0 +1,12 @@
+Universe = vanilla
+
+Executable = error101.sh
+Arguments = 10 # to sleep an hour 
+
+Requirements = (Memory >= 51200)
+
+Error = job.err 
+Output = job.out 
+Log = job.log 
+Queue 1 
+
