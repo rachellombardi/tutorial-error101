@@ -1,1 +1,1 @@
-Tutorial for trouble shooting failed jobs.
+Tutorial for troubleshooting failed jobs.
