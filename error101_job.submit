@@ -1,7 +1,7 @@
 Universe = vanilla
 
 Executable = error101.sh
-Arguments = 10 # to sleep an hour 
+Arguments = 3600 # to sleep an hour 
 
 Requirements = (Memory >= 51200)
 
