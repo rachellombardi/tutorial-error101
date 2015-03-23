@@ -1,0 +1,13 @@
+Universe = vanilla
+
+Executable = error101.sh
+Arguments = 300 # to sleep five minutes 
+
+Requirements = (HAS_JAVA =?= True)
+request_disk = 1000000000000
+
+Error = job.err 
+Output = job.out 
+Log = job.log 
+Queue 1 
+
