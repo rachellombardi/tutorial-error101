@@ -3,7 +3,8 @@ Universe = vanilla
 Executable = error101.sh
 Arguments = 3600 # to sleep an hour 
 
-Requirements = (Memory >= 51200)
+
+request_memory = 51200
 
 Error = job.err 
 Output = job.out 
