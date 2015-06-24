@@ -1,4 +1,4 @@
-[title]: Troubleshooting DHTC errors
+[title]: Troubleshooting Condor errors
 
 # Overview
 In this lesson, we'll learn how to troubleshoot jobs that never start or fail in unexpected ways. 
@@ -27,7 +27,9 @@ We'll check the job status the normal way:
 
 	condor_q username
 
-For some reason, our job is still idle. Why? Try using `condor_q -better-analyze` to find out. Remember that you will also need to specify a pool name. In this case we'll use `osg-flock.grid.iu.edu`:
+For some reason, our job is still idle. Why? Try using `condor_q
+-better-analyze` to find out. Remember that you will also need to
+specify a pool name. In this case we'll use `osg-flock.grid.iu.edu`:
 
 	$ condor_q -better-analyze JOB-ID -pool osg-flock.grid.iu.edu
 	 
@@ -61,25 +63,21 @@ Alternatively, you can edit the resource requirements of the idle job in queue:
 
 	condor_qedit JOB-ID Requirements 'Requirements = (Memory >= 512)' 
 
-<br/>
-<br/>
 
-> ### On your own
-> * Use the `connect status` command to get a list of pools (e.g., `uc3-mgt.mwt2.org`) <br/>
-> * Edit `error101_job.submit`, replacing the `Requirements` line with `Requirements = (regexp("^uc**", TARGET.Machine, "IM") == True)` before the `queue` statement. <br/>
-> *  Use `condor_q -better-analyze` against each pool. Does it match any slots? If so, where?
-
-<br/>
-<br/>
-
-<h3> condor_ssh_to_job </h3> 
-This command allows you to `ssh` to the compute node where the job is running. After running `condor_ssh_to_job`, you will be connected to the remote system, and you will be able to use normal shell commands to investigate your job.
+## condor_ssh_to_job
+This command allows you to `ssh` to the compute node where the job is
+running. After running `condor_ssh_to_job`, you will be connected to
+the remote system, and you will be able to use normal shell commands to
+investigate your job.
 
 	condor_ssh_to_job JOB-ID  
 
-<h3> Held jobs and condor_release </h3>
+## Held jobs and condor_release
 
-Occasionally, a job can fail in various ways and go into "Held" state. Held state means that the job has encountered some error, and cannot run. This doesn't necessarily mean that your job has failed, but, for whatever reason, Condor cannot fulfill your request(s).
+Occasionally, a job can fail in various ways and go into "Held"
+state. Held state means that the job has encountered some error, and
+cannot run. This doesn't necessarily mean that your job has failed, but,
+for whatever reason, Condor cannot fulfill your request(s).
 
 In this particular case, a user had this in his or her Condor submit file:
 
@@ -97,7 +95,10 @@ Let's break down this error message piece by piece:
 
 	Hold reason: Error from glidein_9371@compute-6-28.tier2: STARTER at 10.3.11.39 failed to send file(s) to <192.170.227.195:40485>
 
-This part is quite cryptic, but it simply means that the worker node where your job executed (glidein_9371@compute-6-28.tier2 or 10.3.11.39) tried to transfer a file to the OSG Connect login node (192.170.227.195) but did not succeed. The next part explains why:
+This part is quite cryptic, but it simply means that the worker node
+where your job executed (glidein_9371@compute-6-28.tier2 or 10.3.11.39)
+tried to transfer a file to the OSG Connect login node (192.170.227.195)
+but did not succeed. The next part explains why:
 
 	error reading from /wntmp/condor/compute-6-28/execute/dir_9368/glide_J6I1HT/execute/dir_16393/outputfile: (errno 2) No such file or directory
 
@@ -108,11 +109,17 @@ It's quite possible that the error was simply transient, and if we retry, the jo
 	condor_release JOB-ID 
 
 
-<h3> Retries with periodic_release </h3>
+## Retries with periodic_release
 
-It is important to consider that computing on the Open Science Grid is a very heterogenous environment. You might have a job that works at 95% of remote sites, but inexplicably fails elsewhere. What to do, then? 
+It is important to consider that computing on the Open Science Grid is a
+very heterogenous environment. You might have a job that works at 95% of
+remote sites, but inexplicably fails elsewhere. What to do, then?
 
-Fortunately, we can ask Condor to check if the job failed by looking at its exit code. If you are familiar with UNIX systems, you may be aware that a successful program returns "0". Anything other than 0 might be considered a failure, and so we can ask Condor to monitor for these and retry if it detects any such failures. 
+Fortunately, we can ask Condor to check if the job failed by looking at
+its exit code. If you are familiar with UNIX systems, you may be aware
+that a successful program returns "0". Anything other than 0 might be
+considered a failure, and so we can ask Condor to monitor for these and
+retry if it detects any such failures.
 
 This can be accomplished by adding the following lines to your submit file:
 
@@ -121,24 +128,4 @@ This can be accomplished by adding the following lines to your submit file:
 	
 	# Periodically retry the jobs every 60 seconds, up to a maximum of 5 retries.
 	periodic_release =  (NumJobStarts < 5) && ((CurrentTime - EnteredCurrentStatus) > 60)
-
-<br/>
-<br/>
-
-> ### On your own
-> * Run `tutorial exitcode` to download a copy of this exercise. This tutorial contains a simple script that has roughly a 50/50 chance of exiting 1 or 0. <br/>
-> * Submit the `exitcode.submit` job <br/>
-> * Edit the job, uncomment the line containing `periodic release`, and resubmit your job.<br/> 
-> * How many jobs go into Held state in part 2? <br/>
-> * In part 3, how many jobs remain in Held state after 10 minutes or so?
-
-<br/>
-<br/>
-
-<div class="keypoints" markdown="1">
-#### Keypoints
-*    *condor_q -better-analyze JOB-ID* command is useful to diagnose failed jobs. 
-*    Failed jobs are automatically deducted and periodically retried  with *on_exit_old* and *periodic_release* in the condor submit files.
-</div>
-
 
