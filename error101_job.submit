@@ -1,10 +1,11 @@
 Universe = vanilla
 
 Executable = error101.sh
-Arguments = 3600 # to sleep an hour 
 
+# to sleep an hour
+Arguments = 3600
 
-request_memory = 51200
+request_memory = 2 TB
 
 Error = job.err 
 Output = job.out 
