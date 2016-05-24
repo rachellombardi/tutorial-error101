@@ -8,7 +8,7 @@ In this lesson, we'll learn how to troubleshoot jobs that never start or fail in
 ## Diagnostics with condor_q
 
 The `condor_q` command shows the status of the jobs and it can be used 
-to diagnose why jobs are not running. Using the `-better-analze` flag 
+to diagnose why jobs are not running. Using the `-better-analyze` flag 
 with `condor_q` can show you detailed information about why a job isn't 
 starting. Since OSG Connect sends jobs to many places, we also need to 
 specify a pool name with the `-pool` flag.                              
