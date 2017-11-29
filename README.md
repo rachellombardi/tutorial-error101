@@ -64,14 +64,6 @@ Alternatively, you can edit the resource requirements of the idle job in queue:
 	condor_qedit JOB-ID Requirements 'Requirements = (Memory >= 512)' 
 
 
-## condor_ssh_to_job
-This command allows you to `ssh` to the compute node where the job is
-running. After running `condor_ssh_to_job`, you will be connected to
-the remote system, and you will be able to use normal shell commands to
-investigate your job.
-
-	condor_ssh_to_job JOB-ID  
-
 ## Held jobs and condor_release
 
 Occasionally, a job can fail in various ways and go into "Held"
