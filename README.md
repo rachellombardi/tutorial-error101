@@ -29,9 +29,9 @@ We'll check the job status the normal way:
 
 For some reason, our job is still idle. Why? Try using `condor_q
 -better-analyze` to find out. Remember that you will also need to
-specify a pool name. In this case we'll use `osg-flock.grid.iu.edu`:
+specify a pool name. In this case we'll use `flock.opensciencegrid.org`:
 
-	$ condor_q -better-analyze JOB-ID -pool osg-flock.grid.iu.edu
+	$ condor_q -better-analyze JOB-ID -pool flock.opensciencegrid.org
 	 
 	# Produces a long ouput. 
 	# The following lines are part of the output regarding the job requirements.  
