@@ -10,8 +10,10 @@ In this lesson, we'll learn how to troubleshoot jobs that never start or fail in
 The `condor_q` command shows the status of the jobs and it can be used 
 to diagnose why jobs are not running. Using the `-better-analyze` flag 
 with `condor_q` can show you detailed information about why a job isn't 
-starting. Since OSG Connect sends jobs to many places, we also need to 
+starting on a specific pool. Since OSG Connect sends jobs to many places, we also need to 
 specify a pool name with the `-pool` flag.                              
+
+Unless you know a specific pool you would like to query, checking the `flock.opensciencegrid.org` pool is usually a good place to start.
 
 	$ condor_q -better-analyze JOB-ID -pool POOL-NAME
 
@@ -41,27 +43,45 @@ specify a pool name. In this case we'll use `flock.opensciencegrid.org`:
 	         Slots
 	Step    Matched  Condition
 	-----  --------  ---------
-	[0]           0  Memory >= 51200                 ######## BIG MEMORY, NOT AVAILABLE ###### 
-	[1]       14727  TARGET.Arch == "X86_64"
-	[2]       14727  TARGET.OpSys == "LINUX"
-	[3]       14727  TARGET.Disk >= RequestDisk
-	[4]       14727  TARGET.HasFileTransfer
+	[0]       10674  TARGET.Arch == "X86_64"
+	[1]       10674  TARGET.OpSys == "LINUX"
+	[3]       10674  TARGET.Disk >= RequestDisk
+	[5]           0  TARGET.Memory >= RequestMemory
+	[8]       10674  TARGET.HasFileTransfer
 
-By looking through the match conditions, we see that many nodes match our requests for the Linux operating system and the x86_64 architecture, but none of them match our requirement for 51200 MB of memory. This is an error we introduced 
-puposefully in the script by including a line *Requirements = (Memory >= 51200)* in the file 
-"error101_job.submit". 
+By looking through the match conditions, we see that many nodes match our requests for the Linux operating system and the x86_64 architecture, but none of them match our requirement for 51200 MB of memory. 
 
-We want to edit the job submit file and change the requirements such that we only request 512 MB of memory. The requirements line should look like this: *Requirements = (Memory >= 512)*
+Let's look at our submit script and see if we can find the source of this error:
+
+	$ cat error101_job.submit 
+	Universe = vanilla
+	
+	Executable = error101.sh
+	
+	# to sleep an hour
+	Arguments = 3600
+	
+	request_memory = 2 TB
+	
+	Error = job.err 
+	Output = job.out 
+	Log = job.log 
+	Queue 1 
+
+See the `request_memory` line? We are asking for 2 Terabytes of memory, when we meant to only 
+ask for 2 Gigabytes of memory. Our job is not matching any available job slots because 
+none of the slots offer 2 TB of memory. Let's fix that by changing that line to read `request_memory = 2 GB`.
 
 	$ nano error101_job.submit
 
-Finally, resubmit the job:
+Let's cancel our idle job with the `condor_rm` command and then resubmit our edited job:
 
+	$ condor_rm JOB-ID
 	$ condor_submit error101_job.submit
 
 Alternatively, you can edit the resource requirements of the idle job in queue:
 
-	condor_qedit JOB-ID Requirements 'Requirements = (Memory >= 512)' 
+	condor_qedit JOB_ID RequestMemory 2048
 
 
 ## Held jobs and condor_release
