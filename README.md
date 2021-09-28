@@ -1,4 +1,4 @@
-[title]: - "Troubleshooting Condor errors"
+[title]: - "Troubleshooting Job Errors"
 
 # Overview
 In this lesson, we'll learn how to troubleshoot jobs that never start or fail in unexpected ways. 
