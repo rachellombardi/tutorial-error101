@@ -1,4 +1,5 @@
 [title]: - "Troubleshooting Job Errors"
+[TOC]
 
 # Overview
 In this lesson, we'll learn how to troubleshoot jobs that never start or fail in unexpected ways. 
