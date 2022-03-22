@@ -120,25 +120,3 @@ This bit has the full path of the file that Condor tried to transfer back to `lo
 It's quite possible that the error was simply transient, and if we retry, the job will succeed. We can re-queue a job that is in Held state by using `condor_release`: 
 
 	condor_release JOB-ID 
-
-
-## Retries with periodic_release
-
-It is important to consider that the Open Science Pool is a
-very heterogenous environment. You might have a job that works at 95% of
-remote sites, but inexplicably fails elsewhere. What to do, then?
-
-Fortunately, we can ask Condor to check if the job failed by looking at
-its exit code. If you are familiar with UNIX systems, you may be aware
-that a successful program returns "0". Anything other than 0 might be
-considered a failure, and so we can ask Condor to monitor for these and
-retry if it detects any such failures.
-
-This can be accomplished by adding the following lines to your submit file:
-
-	# Send the job to Held state on failure. 
-	on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)  
-	
-	# Periodically retry the jobs every 10 minutes, up to a maximum of 5 retries.
-	periodic_release =  (NumJobStarts < 5) && ((CurrentTime - EnteredCurrentStatus) > 600)
-
