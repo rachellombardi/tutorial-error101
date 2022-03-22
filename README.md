@@ -124,7 +124,7 @@ It's quite possible that the error was simply transient, and if we retry, the jo
 
 ## Retries with periodic_release
 
-It is important to consider that computing on the Open Science Grid is a
+It is important to consider that the Open Science Pool is a
 very heterogenous environment. You might have a job that works at 95% of
 remote sites, but inexplicably fails elsewhere. What to do, then?
 
